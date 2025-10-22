@@ -1,0 +1,1 @@
+# agri-smart-detect-frontend
