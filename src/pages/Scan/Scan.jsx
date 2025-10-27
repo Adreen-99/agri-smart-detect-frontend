@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { plantApi } from '../../services/plantApi';
+import { api } from '../../services/api';
 import './Scan.css';
 
 const Scan = () => {
@@ -41,22 +42,46 @@ const Scan = () => {
 
   const analyzeImage = async () => {
     if (!selectedImage || !imageFile) return;
-    
+
     setIsAnalyzing(true);
     setError('');
-    
+
     try {
       const result = await plantApi.identifyPlant(imageFile);
       setAnalysisResult(result);
+
+      // Save the scan result to the backend
+      await api.saveScanResult({
+        plantName: result.plantName,
+        isHealthy: result.isHealthy,
+        disease: result.disease,
+        confidence: result.confidence,
+        treatment: result.treatment,
+        imageUrl: selectedImage, // or upload image to backend if needed
+      });
     } catch (error) {
       console.error('Analysis error:', error);
       setError(error.message || 'Failed to analyze image. Please try again.');
-      
+
       // Fallback to mock data if API fails
       const mockResult = getMockResult();
       setAnalysisResult(mockResult);
+
+      // Still try to save mock result
+      try {
+        await api.saveScanResult({
+          plantName: mockResult.plantName,
+          isHealthy: mockResult.isHealthy,
+          disease: mockResult.disease,
+          confidence: mockResult.confidence,
+          treatment: mockResult.treatment,
+          imageUrl: selectedImage,
+        });
+      } catch (saveError) {
+        console.error('Failed to save scan result:', saveError);
+      }
     }
-    
+
     setIsAnalyzing(false);
   };
 

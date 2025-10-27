@@ -12,8 +12,11 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const token = auth.getToken();
     const user = auth.getCurrentUser();
-    setCurrentUser(user);
+    if (token && user) {
+      setCurrentUser(user);
+    }
     setLoading(false);
   }, []);
 
@@ -38,7 +41,8 @@ export function AuthProvider({ children }) {
     currentUser,
     login,
     register,
-    logout
+    logout,
+    isAuthenticated: !!currentUser
   };
 
   return (
