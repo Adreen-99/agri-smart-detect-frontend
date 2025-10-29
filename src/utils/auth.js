@@ -1,91 +1,71 @@
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const TOKEN_KEY = 'authToken';
-const CURRENT_USER_KEY = 'currentUser';
+const API_BASE_URL = 'https://agri-smart-detect-backend.onrender.com/api'; // Your backend URL
 
 export const auth = {
   async login(email, password) {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
-      const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
-        signal: controller.signal,
       });
-
-      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Login failed');
+        throw new Error(errorData.error || 'Login failed');
       }
 
       const data = await response.json();
-      const { token, user } = data;
-
-      localStorage.setItem(TOKEN_KEY, token);
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-      return user;
+      
+      // Store user data and token
+      localStorage.setItem('agri_smart_detect_user', JSON.stringify(data.user));
+      localStorage.setItem('agri_smart_detect_token', data.token);
+      
+      return data.user;
     } catch (error) {
-      if (error.name === 'AbortError') {
-        throw new Error('Request timed out. Please check your connection and try again.');
-      }
-      console.error('Login error:', error);
-      throw new Error(error.message || 'Failed to log in. Please try again.');
+      throw new Error(error.message || 'Failed to connect to server');
     }
   },
 
   async register(userData) {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
-      const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(userData),
-        signal: controller.signal,
       });
-
-      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Registration failed');
+        throw new Error(errorData.error || 'Registration failed');
       }
 
       const data = await response.json();
-      const { token, user } = data;
-
-      localStorage.setItem(TOKEN_KEY, token);
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-      return user;
+      
+      // Store user data and token
+      localStorage.setItem('agri_smart_detect_user', JSON.stringify(data.user));
+      localStorage.setItem('agri_smart_detect_token', data.token);
+      
+      return data.user;
     } catch (error) {
-      if (error.name === 'AbortError') {
-        throw new Error('Request timed out. Please check your connection and try again.');
-      }
-      console.error('Register error:', error);
-      throw new Error(error.message || 'Failed to create account. Please try again.');
+      throw new Error(error.message || 'Failed to connect to server');
     }
   },
 
   logout() {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(CURRENT_USER_KEY);
+    localStorage.removeItem('agri_smart_detect_user');
+    localStorage.removeItem('agri_smart_detect_token');
   },
 
   getCurrentUser() {
-    const user = localStorage.getItem(CURRENT_USER_KEY);
+    const user = localStorage.getItem('agri_smart_detect_user');
     return user ? JSON.parse(user) : null;
   },
 
   getToken() {
-    return localStorage.getItem(TOKEN_KEY);
+    return localStorage.getItem('agri_smart_detect_token');
   }
 };
