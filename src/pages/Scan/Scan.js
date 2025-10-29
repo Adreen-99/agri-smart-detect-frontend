@@ -1,44 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { api } from "../../services/api";
 
 const Scan = () => {
   // ✅ Define all state variables
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  const [selectedCrop, setSelectedCrop] = useState("");
+  const [crops, setCrops] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState("");
   const [analysisResult, setAnalysisResult] = useState(null);
 
-  // ✅ Your existing analyzeImage function (now uses defined states)
+  // Fetch crops on component mount
+  useEffect(() => {
+    const fetchCrops = async () => {
+      try {
+        const cropsData = await api.getCrops();
+        setCrops(cropsData);
+      } catch (error) {
+        console.error("Error fetching crops:", error);
+      }
+    };
+    fetchCrops();
+  }, []);
+
+  // Convert file to base64
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+  };
+
+  // ✅ Updated analyzeImage function to send JSON payload to /reports
   const analyzeImage = async () => {
-    if (!selectedImage || !imageFile) return;
+    if (!selectedImage || !imageFile || !selectedCrop) return;
 
     setIsAnalyzing(true);
     setError("");
 
     try {
-      const token = localStorage.getItem("agri_smart_detect_token");
+      // Convert image to base64
+      const imageData = await fileToBase64(imageFile);
 
-      const formData = new FormData();
-      formData.append("image", imageFile);
+      // Prepare payload as per backend expectations
+      const scanData = {
+        image_data: imageData,
+        crop_id: parseInt(selectedCrop),
+        user_id: 1, // Assuming user ID is 1 for now, adjust as needed
+      };
 
-      const response = await fetch(
-        "https://agri-smart-detect-backend.onrender.com/api/diagnosis/scan",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Analysis failed");
-      }
-
-      const data = await response.json();
-      setAnalysisResult(data.analysis);
+      // Use api service to save scan result
+      const data = await api.saveScanResult(scanData);
+      setAnalysisResult(data);
     } catch (error) {
       console.error("Analysis error:", error);
       setError(error.message || "Failed to analyze image. Please try again.");
@@ -61,6 +77,18 @@ const Scan = () => {
     <div>
       <h1>Scan Image</h1>
 
+      <div>
+        <label>Select Crop:</label>
+        <select value={selectedCrop} onChange={(e) => setSelectedCrop(e.target.value)}>
+          <option value="">Choose a crop</option>
+          {crops.map((crop) => (
+            <option key={crop.id} value={crop.id}>
+              {crop.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <input type="file" accept="image/*" onChange={handleImageChange} />
 
       {selectedImage && (
@@ -73,7 +101,7 @@ const Scan = () => {
         </div>
       )}
 
-      <button onClick={analyzeImage} disabled={isAnalyzing}>
+      <button onClick={analyzeImage} disabled={isAnalyzing || !selectedCrop}>
         {isAnalyzing ? "Analyzing..." : "Analyze Image"}
       </button>
 

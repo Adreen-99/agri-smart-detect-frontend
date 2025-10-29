@@ -1,28 +1,18 @@
-const API_BASE_URL = 'https://agri-smart-detect-backend.onrender.com/api'; // Your backend URL
+const API_BASE_URL = 'https://agri-smart-detect-backend.onrender.com'; // Updated to match backend without /api
 
 export const auth = {
-  async login(email, password) {
+  async login(username, password) {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      // For now, simulate login since backend doesn't have auth routes
+      // In a real app, you'd implement proper auth
+      const simulatedUser = { id: 1, username: username };
+      const simulatedToken = 'simulated-jwt-token';
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Login failed');
-      }
-
-      const data = await response.json();
-      
       // Store user data and token
-      localStorage.setItem('agri_smart_detect_user', JSON.stringify(data.user));
-      localStorage.setItem('agri_smart_detect_token', data.token);
-      
-      return data.user;
+      localStorage.setItem('agri_smart_detect_user', JSON.stringify(simulatedUser));
+      localStorage.setItem('agri_smart_detect_token', simulatedToken);
+
+      return simulatedUser;
     } catch (error) {
       throw new Error(error.message || 'Failed to connect to server');
     }
@@ -30,7 +20,8 @@ export const auth = {
 
   async register(userData) {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+      // Use the backend /users POST route
+      const response = await fetch(`${API_BASE_URL}/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,16 +31,16 @@ export const auth = {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Registration failed');
+        throw new Error(errorData.errors?.join(', ') || 'Registration failed');
       }
 
       const data = await response.json();
-      
-      // Store user data and token
-      localStorage.setItem('agri_smart_detect_user', JSON.stringify(data.user));
-      localStorage.setItem('agri_smart_detect_token', data.token);
-      
-      return data.user;
+
+      // Store user data and simulate token (since backend doesn't return token)
+      localStorage.setItem('agri_smart_detect_user', JSON.stringify(data));
+      localStorage.setItem('agri_smart_detect_token', 'simulated-jwt-token'); // Simulate token
+
+      return data;
     } catch (error) {
       throw new Error(error.message || 'Failed to connect to server');
     }

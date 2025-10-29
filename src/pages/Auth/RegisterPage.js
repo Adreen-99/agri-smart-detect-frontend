@@ -5,10 +5,11 @@ import '../../components/Auth/Register.css';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    username: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    phone_number: '',
+    county: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,15 +27,16 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirmPassword) {
       return setError('Passwords do not match');
     }
-    
+
     try {
       setError('');
       setLoading(true);
-      await register(formData);
+      const { confirmPassword, ...registerData } = formData; // Remove confirmPassword before sending
+      await register(registerData);
       navigate('/dashboard');
     } catch (error) {
       setError('Failed to create account: ' + error.message);
@@ -52,28 +54,39 @@ const RegisterPage = () => {
         
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label htmlFor="name">Full Name</label>
+            <label htmlFor="username">Username</label>
             <input
               type="text"
-              id="name"
-              name="name"
-              value={formData.name}
+              id="username"
+              name="username"
+              value={formData.username}
               onChange={handleChange}
               required
-              placeholder="Enter your full name"
+              placeholder="Enter your username"
             />
           </div>
-          
+
           <div className="form-group">
-            <label htmlFor="email">Email Address</label>
+            <label htmlFor="phone_number">Phone Number</label>
             <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
+              type="tel"
+              id="phone_number"
+              name="phone_number"
+              value={formData.phone_number}
               onChange={handleChange}
-              required
-              placeholder="Enter your email"
+              placeholder="Enter your phone number"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="county">County</label>
+            <input
+              type="text"
+              id="county"
+              name="county"
+              value={formData.county}
+              onChange={handleChange}
+              placeholder="Enter your county"
             />
           </div>
           
