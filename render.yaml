@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: agri-smart-detect-frontend
+    runtime: static
+    buildCommand: npm run build
+    staticPublishPath: ./build
+    envVars:
+      - key: REACT_APP_BACKEND_URL
+        value: https://agri-smart-detect-backend.onrender.com
+      - key: REACT_APP_PLANT_ID_API_KEY
+        value: 9TCSDrmv6lihRpy8mJve5p8wZ7j9ZHFfvcJS3XNOk5FRzU1Oll
