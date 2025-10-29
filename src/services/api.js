@@ -1,5 +1,5 @@
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const TOKEN_KEY = 'authToken';
+const TOKEN_KEY = 'agri_smart_detect_token'; // Updated to match usage in components
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem(TOKEN_KEY);
@@ -12,34 +12,47 @@ const getAuthHeaders = () => {
 export const api = {
   async getDashboardStats() {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/dashboard/stats`, {
+      const response = await fetch(`${BACKEND_URL}/reports`, {
         method: 'GET',
         headers: getAuthHeaders(),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch dashboard stats');
+        throw new Error('Failed to fetch reports');
       }
 
-      return await response.json();
+      const reports = await response.json();
+      // Compute basic stats from reports
+      const totalScans = reports.length;
+      const accurateScans = reports.filter(r => r.is_accurate).length;
+      const accuracyRate = totalScans > 0 ? (accurateScans / totalScans * 100).toFixed(2) : 0;
+      const uniqueDiseases = new Set(reports.map(r => r.disease_id)).size;
+
+      return {
+        total_scans: totalScans,
+        accurate_scans: accurateScans,
+        accuracy_rate: accuracyRate,
+        unique_diseases: uniqueDiseases,
+      };
     } catch (error) {
       console.error('Dashboard stats error:', error);
       throw error;
     }
   },
 
-  async getScanHistory() {
+  async getScanHistory(limit = 20) {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/scans/history`, {
+      const response = await fetch(`${BACKEND_URL}/reports`, {
         method: 'GET',
         headers: getAuthHeaders(),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch scan history');
+        throw new Error('Failed to fetch reports');
       }
 
-      return await response.json();
+      const reports = await response.json();
+      return reports.slice(0, limit); // Limit to recent ones
     } catch (error) {
       console.error('Scan history error:', error);
       throw error;
@@ -48,7 +61,7 @@ export const api = {
 
   async saveScanResult(scanData) {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/scans`, {
+      const response = await fetch(`${BACKEND_URL}/reports`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(scanData),
@@ -61,6 +74,24 @@ export const api = {
       return await response.json();
     } catch (error) {
       console.error('Save scan error:', error);
+      throw error;
+    }
+  },
+
+  async getCrops() {
+    try {
+      const response = await fetch(`${BACKEND_URL}/crops`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch crops');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Crops fetch error:', error);
       throw error;
     }
   },
