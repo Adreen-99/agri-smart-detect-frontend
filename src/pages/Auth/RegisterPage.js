@@ -8,13 +8,12 @@ const RegisterPage = () => {
     name: '',
     email: '',
     password: '',
-    confirmPassword: '',
-    farmName: '',
-    farmSize: '',
-    location: ''
+    confirmPassword: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -78,79 +77,51 @@ const RegisterPage = () => {
             />
           </div>
           
-          <div className="form-group">
-            <label htmlFor="farmName">Farm Name</label>
-            <input
-              type="text"
-              id="farmName"
-              name="farmName"
-              value={formData.farmName}
-              onChange={handleChange}
-              required
-              placeholder="Enter your farm name"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="farmSize">Farm Size (acres)</label>
-            <input
-              type="number"
-              id="farmSize"
-              name="farmSize"
-              value={formData.farmSize}
-              onChange={handleChange}
-              required
-              placeholder="Enter farm size in acres"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="location">Location</label>
-            <select
-              id="location"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select your country</option>
-              <option value="Nigeria">Nigeria</option>
-              <option value="Kenya">Kenya</option>
-              <option value="Ghana">Ghana</option>
-              <option value="South Africa">South Africa</option>
-              <option value="Ethiopia">Ethiopia</option>
-              <option value="Tanzania">Tanzania</option>
-              <option value="Uganda">Uganda</option>
-              <option value="Other">Other African Country</option>
-            </select>
-          </div>
           
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="Create a password"
-              autoComplete="new-password"
-            />
+            <div className="password-input-container">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                placeholder="Create a password"
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
+            </div>
           </div>
 
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              placeholder="Confirm your password"
-              autoComplete="new-password"
-            />
+            <div className="password-input-container">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                placeholder="Confirm your password"
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? "🙈" : "👁️"}
+              </button>
+            </div>
           </div>
           
           <button 

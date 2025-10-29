@@ -5,13 +5,19 @@ const CURRENT_USER_KEY = 'currentUser';
 export const auth = {
   async login(email, password) {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
       const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -25,6 +31,9 @@ export const auth = {
       localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
       return user;
     } catch (error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Request timed out. Please check your connection and try again.');
+      }
       console.error('Login error:', error);
       throw new Error(error.message || 'Failed to log in. Please try again.');
     }
@@ -32,13 +41,19 @@ export const auth = {
 
   async register(userData) {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
       const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(userData),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -52,6 +67,9 @@ export const auth = {
       localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
       return user;
     } catch (error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Request timed out. Please check your connection and try again.');
+      }
       console.error('Register error:', error);
       throw new Error(error.message || 'Failed to create account. Please try again.');
     }
