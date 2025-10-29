@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { auth } from './utils/auth';
+import { auth } from '../utils/auth';
 
 const AuthContext = createContext();
 
@@ -12,11 +12,8 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = auth.getToken();
     const user = auth.getCurrentUser();
-    if (token && user) {
-      setCurrentUser(user);
-    }
+    setCurrentUser(user);
     setLoading(false);
   }, []);
 
@@ -41,8 +38,7 @@ export function AuthProvider({ children }) {
     currentUser,
     login,
     register,
-    logout,
-    isAuthenticated: !!currentUser
+    logout
   };
 
   return (
