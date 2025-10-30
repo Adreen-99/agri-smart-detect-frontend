@@ -109,27 +109,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="farm-info">
-        <h2>Your Farm Information</h2>
-        <div className="farm-details">
-          <div className="detail-item">
-            <label>Farm Name:</label>
-            <span>{currentUser.farmName || 'Green Valley Farm'}</span>
-          </div>
-          <div className="detail-item">
-            <label>Farm Size:</label>
-            <span>{currentUser.farmSize || '5'} acres</span>
-          </div>
-          <div className="detail-item">
-            <label>Location:</label>
-            <span>{currentUser.location || 'Nigeria'}</span>
-          </div>
-          <div className="detail-item">
-            <label>Member Since:</label>
-            <span>January 2024</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

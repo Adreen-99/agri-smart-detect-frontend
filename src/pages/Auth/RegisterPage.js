@@ -5,7 +5,8 @@ import '../../components/Auth/Register.css';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
-    username: '',
+    name: '',
+    email: '',
     password: '',
     confirmPassword: ''
   });
@@ -34,7 +35,10 @@ const RegisterPage = () => {
       setError('');
       setLoading(true);
       const { confirmPassword, ...registerData } = formData; // Remove confirmPassword before sending
-      await register(registerData);
+      // Create username from full name
+      const username = formData.name.toLowerCase().replace(/\s+/g, '_');
+      const dataToSend = { ...registerData, username };
+      await register(dataToSend);
       navigate('/dashboard');
     } catch (error) {
       setError('Failed to create account: ' + error.message);
@@ -52,15 +56,28 @@ const RegisterPage = () => {
         
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="name">Full Name</label>
             <input
               type="text"
-              id="username"
-              name="username"
-              value={formData.username}
+              id="name"
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               required
-              placeholder="Enter your username"
+              placeholder="Enter your full name"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              placeholder="Enter your email"
             />
           </div>
 
