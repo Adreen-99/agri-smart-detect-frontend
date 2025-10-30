@@ -7,9 +7,7 @@ const RegisterPage = () => {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
-    confirmPassword: '',
-    phone_number: '',
-    county: ''
+    confirmPassword: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -66,30 +64,6 @@ const RegisterPage = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="phone_number">Phone Number</label>
-            <input
-              type="tel"
-              id="phone_number"
-              name="phone_number"
-              value={formData.phone_number}
-              onChange={handleChange}
-              placeholder="Enter your phone number"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="county">County</label>
-            <input
-              type="text"
-              id="county"
-              name="county"
-              value={formData.county}
-              onChange={handleChange}
-              placeholder="Enter your county"
-            />
-          </div>
-          
           
           <div className="form-group">
             <label htmlFor="password">Password</label>

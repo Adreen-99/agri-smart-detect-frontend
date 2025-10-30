@@ -1,118 +1,233 @@
-import React, { useState, useEffect } from "react";
-import { api } from "../../services/api";
+import React, { useState, useRef } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import './Scan.css';
 
 const Scan = () => {
-  // ✅ Define all state variables
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
-  const [selectedCrop, setSelectedCrop] = useState("");
-  const [crops, setCrops] = useState([]);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [error, setError] = useState("");
   const [analysisResult, setAnalysisResult] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [error, setError] = useState('');
+  const fileInputRef = useRef(null);
+  const { currentUser } = useAuth();
 
-  // Fetch crops on component mount
-  useEffect(() => {
-    const fetchCrops = async () => {
-      try {
-        const cropsData = await api.getCrops();
-        setCrops(cropsData);
-      } catch (error) {
-        console.error("Error fetching crops:", error);
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please upload an image file (JPEG, PNG, WebP)');
+        return;
       }
-    };
-    fetchCrops();
-  }, []);
 
-  // Convert file to base64
-  const fileToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
+      // Validate file size (10MB max)
+      if (file.size > 10 * 1024 * 1024) {
+        setError('Image size should be less than 10MB');
+        return;
+      }
+
+      setError('');
+      setImageFile(file);
+      
       const reader = new FileReader();
+      reader.onload = (e) => {
+        setSelectedImage(e.target.result);
+        setAnalysisResult(null);
+      };
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = error => reject(error);
-    });
+    }
   };
 
-  // ✅ Updated analyzeImage function to send JSON payload to /reports
   const analyzeImage = async () => {
-    if (!selectedImage || !imageFile || !selectedCrop) return;
-
+    if (!selectedImage || !imageFile) return;
+    
     setIsAnalyzing(true);
-    setError("");
-
+    setError('');
+    
     try {
-      // Convert image to base64
-      const imageData = await fileToBase64(imageFile);
+      const token = localStorage.getItem('agri_smart_detect_token');
+      
+      const formData = new FormData();
+      formData.append('image', imageFile);
+      
+      const response = await fetch('https://agri-smart-detect-backend.onrender.com/api/diagnosis/scan', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
-      // Prepare payload as per backend expectations
-      const scanData = {
-        image_data: imageData,
-        crop_id: parseInt(selectedCrop),
-        user_id: 1, // Assuming user ID is 1 for now, adjust as needed
-      };
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Analysis failed');
+      }
 
-      // Use api service to save scan result
-      const data = await api.saveScanResult(scanData);
-      setAnalysisResult(data);
+      const data = await response.json();
+      setAnalysisResult(data.analysis);
+      
     } catch (error) {
-      console.error("Analysis error:", error);
-      setError(error.message || "Failed to analyze image. Please try again.");
+      console.error('Analysis error:', error);
+      setError(error.message || 'Failed to analyze image. Please try again.');
     }
-
+    
     setIsAnalyzing(false);
   };
 
-  // ✅ Handle file selection
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-      setSelectedImage(URL.createObjectURL(file));
-    }
+  const resetScan = () => {
+    setSelectedImage(null);
+    setImageFile(null);
+    setAnalysisResult(null);
+    setError('');
   };
 
-  // ✅ Render
   return (
-    <div>
-      <h1>Scan Image</h1>
-
-      <div>
-        <label>Select Crop:</label>
-        <select value={selectedCrop} onChange={(e) => setSelectedCrop(e.target.value)}>
-          <option value="">Choose a crop</option>
-          {crops.map((crop) => (
-            <option key={crop.id} value={crop.id}>
-              {crop.name}
-            </option>
-          ))}
-        </select>
+    <div className="scan-page">
+      <div className="scan-header">
+        <h1>Crop Disease Scanner</h1>
+        <p>Welcome back, {currentUser.name}! Upload a photo of your crop leaves for instant disease identification.</p>
+        
+        {/* Show API Status */}
+        <div className="api-status">
+          <div className="status-indicator active">
+            ✅ AI Powered by Plant.id
+          </div>
+          <p className="status-help">
+            Using real AI plant identification with your Plant.id API key
+          </p>
+        </div>
       </div>
 
-      <input type="file" accept="image/*" onChange={handleImageChange} />
-
-      {selectedImage && (
-        <div>
-          <img
-            src={selectedImage}
-            alt="Selected"
-            style={{ width: "200px", marginTop: "10px" }}
-          />
+      {error && (
+        <div className="error-banner">
+          {error}
         </div>
       )}
 
-      <button onClick={analyzeImage} disabled={isAnalyzing || !selectedCrop}>
-        {isAnalyzing ? "Analyzing..." : "Analyze Image"}
-      </button>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {analysisResult && (
-        <div>
-          <h2>Analysis Result</h2>
-          <pre>{JSON.stringify(analysisResult, null, 2)}</pre>
+      <div className="scanner-container">
+        <div className="upload-section">
+          <div 
+            className="upload-area"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {selectedImage ? (
+              <div className="image-preview">
+                <img src={selectedImage} alt="Selected crop" />
+                <button className="change-image-btn" onClick={(e) => {
+                  e.stopPropagation();
+                  resetScan();
+                }}>
+                  Change Image
+                </button>
+              </div>
+            ) : (
+              <div className="upload-placeholder">
+                <div className="upload-icon">📷</div>
+                <p>Click to upload an image of crop leaves</p>
+                <small>Supported formats: JPG, PNG, WebP (Max 10MB)</small>
+              </div>
+            )}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageUpload}
+              accept="image/jpeg,image/png,image/webp"
+              style={{ display: 'none' }}
+            />
+          </div>
         </div>
-      )}
+
+        {selectedImage && (
+          <div className="analysis-section">
+            <button 
+              className="analyze-btn"
+              onClick={analyzeImage}
+              disabled={isAnalyzing}
+            >
+              {isAnalyzing ? (
+                <>
+                  <div className="spinner"></div>
+                  Analyzing with AI...
+                </>
+              ) : (
+                'Analyze with AI'
+              )}
+            </button>
+
+            {analysisResult && (
+              <div className="result-card">
+                <h3>Analysis Complete</h3>
+                
+                {/* Show API source */}
+                <div className="api-source">
+                  <small>Powered by: <strong>Plant.id AI</strong></small>
+                </div>
+                
+                <div className="plant-info">
+                  <h4>Plant Identified:</h4>
+                  <p><strong>{analysisResult.plantName}</strong></p>
+                  {analysisResult.details?.commonNames?.length > 0 && (
+                    <p>Also known as: {analysisResult.details.commonNames.join(', ')}</p>
+                  )}
+                </div>
+
+                <div className={`result-status ${analysisResult.isHealthy ? 'healthy' : 'diseased'}`}>
+                  {analysisResult.isHealthy ? '✅ Healthy Plant' : `⚠️ ${analysisResult.disease}`}
+                </div>
+                
+                <div className="confidence">
+                  AI Confidence: <span>{analysisResult.confidence}%</span>
+                </div>
+                
+                <div className="treatment-info">
+                  <h4>Recommended Treatment:</h4>
+                  <p>{analysisResult.treatment}</p>
+                </div>
+                
+                {analysisResult.disease && analysisResult.prevention && (
+                  <div className="prevention-info">
+                    <h4>Prevention Tips:</h4>
+                    <p>{analysisResult.prevention}</p>
+                  </div>
+                )}
+                
+                {analysisResult.details?.description && (
+                  <div className="description-info">
+                    <h4>Description:</h4>
+                    <p>{analysisResult.details.description}</p>
+                  </div>
+                )}
+                
+                <button className="new-scan-btn" onClick={resetScan}>
+                  Scan Another Image
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="scan-tips">
+        <h3>Tips for Best Results:</h3>
+        <div className="tips-grid">
+          <div className="tip-card">
+            <div className="tip-icon">☀️</div>
+            <p>Take photos in good natural lighting</p>
+          </div>
+          <div className="tip-card">
+            <div className="tip-icon">🎯</div>
+            <p>Focus clearly on the affected leaves</p>
+          </div>
+          <div className="tip-card">
+            <div className="tip-icon">📐</div>
+            <p>Include multiple angles if possible</p>
+          </div>
+          <div className="tip-card">
+            <div className="tip-icon">🌿</div>
+            <p>Capture both healthy and affected areas</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
