@@ -1,30 +1,28 @@
-const API_BASE_URL = 'https://agri-smart-detect-backend.onrender.com'; // Updated to match backend without /api
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'https://clean-backend-6rgv.onrender.com';
 
 export const auth = {
   async login(email, password) {
     try {
-      // Check if user exists in localStorage (simulated backend)
-      const storedUser = localStorage.getItem('agri_smart_detect_user');
-      if (!storedUser) {
-        throw new Error('No account found. Please register first.');
+      const response = await fetch(`${API_BASE_URL}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Login failed');
       }
 
-      const user = JSON.parse(storedUser);
+      const data = await response.json();
 
-      // For now, simulate login validation - in real app, this would be server-side
-      // Check if email matches stored user data
-      if (user.email !== email) {
-        throw new Error('Invalid email or password');
-      }
+      // Store user data and token
+      localStorage.setItem('agri_smart_detect_user', JSON.stringify(data.user));
+      localStorage.setItem('agri_smart_detect_token', data.token);
 
-      // In a real app, password would be hashed and verified on server
-      // For demo purposes, we'll assume password is correct if email matches
-      const simulatedToken = 'simulated-jwt-token-' + Date.now();
-
-      // Update stored user data with token
-      localStorage.setItem('agri_smart_detect_token', simulatedToken);
-
-      return user;
+      return data.user;
     } catch (error) {
       throw new Error(error.message || 'Failed to connect to server');
     }
