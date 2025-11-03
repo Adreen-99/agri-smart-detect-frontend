@@ -1,9 +1,9 @@
-const API_BASE_URL = 'https://agri-smart-detect-backend-3-m0y3.onrender.com/'; // Updated to match Render backend
+const API_BASE_URL = 'https://agri-smart-detect-backend-3-m0y3.onrender.com/api'; // Updated to match Render backend with /api prefix
 
 export const auth = {
   async login(email, password) {
     try {
-      const response = await fetch(`${API_BASE_URL}/login`, {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,8 +30,8 @@ export const auth = {
 
   async register(userData) {
     try {
-      // Use the backend /users POST route
-      const response = await fetch(`${API_BASE_URL}/users`, {
+      // Use the backend /api/auth/register route
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
