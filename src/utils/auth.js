@@ -1,5 +1,4 @@
 const API_BASE_URL = 'https://elegant-bonbon-c7e371.netlify.app/'; // Updated to match backend without /api
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'https://clean-backend-6rgv.onrender.com';
 
 export const auth = {
   async login(email, password) {
