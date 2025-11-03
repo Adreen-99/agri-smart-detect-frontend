@@ -81,6 +81,32 @@ const RegisterPage = () => {
               required
               placeholder="Enter your email"
             />
+          <div className="form-group">
+            <label htmlFor="country">Country</label>
+            <input
+              type="text"
+              id="country"
+              name="country"
+              value={formData.country}
+              onChange={handleChange}
+              required
+              placeholder="Enter your country"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="phoneNumber">Phone Number</label>
+            <input
+              type="tel"
+              id="phoneNumber"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              required
+              placeholder="Enter your phone number"
+            />
+          </div>
+
           </div>
 
           
