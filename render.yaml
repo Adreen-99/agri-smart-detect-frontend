@@ -6,6 +6,6 @@ services:
     staticPublishPath: ./build
     envVars:
       - key: REACT_APP_BACKEND_URL
-        value: https://agri-smart-detect-backend-3-m0y3.onrender.com/
+        value: https://elegant-bonbon-c7e371.netlify.app/
       - key: REACT_APP_PLANT_ID_API_KEY
         value: 8VY7pHmuqNXEt7WlEclcIazuj24GUivdJbSXxJXviDYGTuixpg
