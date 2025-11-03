@@ -1,61 +1,114 @@
-import React, { useEffect, useState } from "react";
-import { api } from "../../services/api";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import './Dashboard.css';
 
 const Dashboard = () => {
-  // Define the state variables and their setters
-  const [stats, setStats] = useState(null);
-  const [recentScans, setRecentScans] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchDashboardData = async () => {
-    try {
-      // Fetch stats using api service
-      const statsData = await api.getDashboardStats();
-      setStats(statsData);
-
-      // Fetch recent scans using api service
-      const scansData = await api.getScanHistory(3);
-      setRecentScans(scansData);
-
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ✅ Run once when component mounts
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  // ✅ Render state data
-  if (loading) return <p>Loading dashboard...</p>;
+  const { currentUser } = useAuth();
 
   return (
-    <div>
-      <h1>Dashboard</h1>
+    <div className="dashboard-page">
+      <div className="dashboard-header">
+        <h1>Welcome to Your Farm Dashboard, {currentUser.firstName}!</h1>
+        <p>Hello, {currentUser.name}! Here's your farming overview.</p>
+      </div>
 
-      {stats && (
-        <div>
-          <h2>Stats</h2>
-          <p>Total Scans: {stats.total_scans}</p>
-          <p>Accurate Scans: {stats.accurate_scans}</p>
-          <p>Accuracy Rate: {stats.accuracy_rate}%</p>
-          <p>Unique Diseases Detected: {stats.unique_diseases}</p>
+      <div className="dashboard-stats">
+        <div className="stat-card">
+          <div className="stat-icon">📊</div>
+          <div className="stat-info">
+            <h3>Total Scans</h3>
+            <p className="stat-number">12</p>
+            <p className="stat-label">This month</p>
+          </div>
         </div>
-      )}
 
-      {recentScans.length > 0 && (
-        <div>
-          <h2>Recent Scans</h2>
-          <ul>
-            {recentScans.map((scan) => (
-              <li key={scan.id}>Report ID: {scan.id} - Confidence: {scan.confidence_score}</li>
-            ))}
-          </ul>
+        <div className="stat-card">
+          <div className="stat-icon">🌿</div>
+          <div className="stat-info">
+            <h3>Healthy Plants</h3>
+            <p className="stat-number">8</p>
+            <p className="stat-label">67% success rate</p>
+          </div>
         </div>
-      )}
+
+        <div className="stat-card">
+          <div className="stat-icon">⚠️</div>
+          <div className="stat-info">
+            <h3>Diseases Detected</h3>
+            <p className="stat-number">4</p>
+            <p className="stat-label">Requires attention</p>
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-icon">📈</div>
+          <div className="stat-info">
+            <h3>Yield Impact</h3>
+            <p className="stat-number">+15%</p>
+            <p className="stat-label">Since using Agri Smart Detect</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="dashboard-actions">
+        <h2>Quick Actions</h2>
+        <div className="action-grid">
+          <Link to="/scan" className="action-card primary">
+            <div className="action-icon">🔍</div>
+            <h3>Scan New Crop</h3>
+            <p>Upload images for AI disease detection</p>
+          </Link>
+
+          <div className="action-card">
+            <div className="action-icon">📋</div>
+            <h3>Scan History</h3>
+            <p>View your previous crop analyses</p>
+          </div>
+
+          <div className="action-card">
+            <div className="action-icon">💡</div>
+            <h3>Farming Tips</h3>
+            <p>Get personalized recommendations</p>
+          </div>
+
+          <div className="action-card">
+            <div className="action-icon">🌧️</div>
+            <h3>Weather</h3>
+            <p>Check local weather conditions</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="recent-activity">
+        <h2>Recent Activity</h2>
+        <div className="activity-list">
+          <div className="activity-item">
+            <div className="activity-icon">🔍</div>
+            <div className="activity-info">
+              <p><strong>Cassava Scan</strong> - Healthy</p>
+              <small>2 hours ago • 96% confidence</small>
+            </div>
+          </div>
+
+          <div className="activity-item">
+            <div className="activity-icon">🔍</div>
+            <div className="activity-info">
+              <p><strong>Maize Scan</strong> - Rust Detected</p>
+              <small>1 day ago • 87% confidence</small>
+            </div>
+          </div>
+
+          <div className="activity-item">
+            <div className="activity-icon">🔍</div>
+            <div className="activity-info">
+              <p><strong>Tomato Scan</strong> - Healthy</p>
+              <small>2 days ago • 94% confidence</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 };

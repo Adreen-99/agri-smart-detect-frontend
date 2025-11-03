@@ -1,18 +1,29 @@
 const API_BASE_URL = 'https://elegant-bonbon-c7e371.netlify.app/'; // Updated to match backend without /api
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'https://clean-backend-6rgv.onrender.com';
 
 export const auth = {
-  async login(username, password) {
+  async login(email, password) {
     try {
-      // For now, simulate login since backend doesn't have auth routes
-      // In a real app, you'd implement proper auth
-      const simulatedUser = { id: 1, username: username };
-      const simulatedToken = 'simulated-jwt-token';
+      const response = await fetch(`${API_BASE_URL}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Login failed');
+      }
+
+      const data = await response.json();
 
       // Store user data and token
-      localStorage.setItem('agri_smart_detect_user', JSON.stringify(simulatedUser));
-      localStorage.setItem('agri_smart_detect_token', simulatedToken);
+      localStorage.setItem('agri_smart_detect_user', JSON.stringify(data.user));
+      localStorage.setItem('agri_smart_detect_token', data.token);
 
-      return simulatedUser;
+      return data.user;
     } catch (error) {
       throw new Error(error.message || 'Failed to connect to server');
     }

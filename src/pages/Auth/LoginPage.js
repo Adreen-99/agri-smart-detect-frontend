@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import '../../components/Auth/Login.css';
 
 const LoginPage = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,7 +17,7 @@ const LoginPage = () => {
     try {
       setError('');
       setLoading(true);
-      await login(username, password);
+      await login(email, password);
       navigate('/dashboard');
     } catch (error) {
       setError('Failed to log in: ' + error.message);
@@ -35,14 +35,14 @@ const LoginPage = () => {
         
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="email">Email Address</label>
             <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="Enter your username"
+              placeholder="Enter your email"
             />
           </div>
           
