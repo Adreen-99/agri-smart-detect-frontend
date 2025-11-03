@@ -6,6 +6,7 @@ import ProtectedRoute from './components/Common/ProtectedRoute';
 import Home from './pages/Home/Home';
 import Scan from './pages/Scan/Scan';
 import Dashboard from './pages/Dashboard/Dashboard';
+import Profile from './pages/Profile/Profile';
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
 import './App.css';
@@ -29,13 +30,21 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
-              <Route 
-                path="/dashboard" 
+              <Route
+                path="/dashboard"
                 element={
                   <ProtectedRoute>
                     <Dashboard />
                   </ProtectedRoute>
-                } 
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
               />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

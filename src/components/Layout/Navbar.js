@@ -36,11 +36,17 @@ const Navbar = () => {
               >
                 Disease Scan
               </Link>
-              <Link 
-                to="/dashboard" 
+              <Link
+                to="/dashboard"
                 className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}
               >
                 Dashboard
+              </Link>
+              <Link
+                to="/profile"
+                className={`nav-link ${location.pathname === '/profile' ? 'active' : ''}`}
+              >
+                Profile
               </Link>
               <div className="user-menu">
                 <span>Welcome, {currentUser.name}</span>

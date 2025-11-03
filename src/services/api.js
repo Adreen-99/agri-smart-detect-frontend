@@ -1,4 +1,4 @@
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_URL = 'https://agri-smart-detect-backend-3-m0y3.onrender.com/';
 const TOKEN_KEY = 'agri_smart_detect_token'; // Updated to match usage in components
 
 const getAuthHeaders = () => {
@@ -92,6 +92,26 @@ export const api = {
       return await response.json();
     } catch (error) {
       console.error('Crops fetch error:', error);
+      throw error;
+    }
+  },
+
+  async updateProfile(userId, profileData) {
+    try {
+      const response = await fetch(`${BACKEND_URL}/users/${userId}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(profileData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update profile');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Profile update error:', error);
       throw error;
     }
   },
