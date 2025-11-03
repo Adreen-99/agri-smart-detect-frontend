@@ -9,7 +9,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard-page">
       <div className="dashboard-header">
-        <h1>Welcome to Your Farm Dashboard</h1>
+        <h1>Welcome to Your Farm Dashboard, {currentUser.firstName}!</h1>
         <p>Hello, {currentUser.name}! Here's your farming overview.</p>
       </div>
 
