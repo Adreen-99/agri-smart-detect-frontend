@@ -1,4 +1,4 @@
-const BACKEND_URL = 'https://agri-smart-detect-backend-3-m0y3.onrender.com/';
+const BACKEND_URL = 'https://agri-smart-detect-backend-3-m0y3.onrender.com/api';
 const TOKEN_KEY = 'agri_smart_detect_token'; // Updated to match usage in components
 
 const getAuthHeaders = () => {
