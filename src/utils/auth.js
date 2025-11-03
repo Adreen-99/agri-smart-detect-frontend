@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://agri-smart-detect-backend.onrender.com'; // Updated to match backend without /api
+const API_BASE_URL = 'https://elegant-bonbon-c7e371.netlify.app/'; // Updated to match backend without /api
 
 export const auth = {
   async login(username, password) {
