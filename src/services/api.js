@@ -1,5 +1,5 @@
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://agri-smart-detect-backend-3-m0y3.onrender.com';
-const TOKEN_KEY = 'agri_smart_detect_token'; // Updated to match usage in components
+const TOKEN_KEY = 'agri_smart_detect_token';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem(TOKEN_KEY);
