@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import './Scan.css';
 
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'https://agri-smart-detect-backend-3-m0y3.onrender.com';
+
 const Scan = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
@@ -50,7 +52,7 @@ const Scan = () => {
       const formData = new FormData();
       formData.append('image', imageFile);
       
-      const response = await fetch('https://agri-smart-detect-backend.onrender.com/api/diagnosis/scan', {
+      const response = await fetch(`${API_BASE_URL}/api/diagnosis/scan`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
