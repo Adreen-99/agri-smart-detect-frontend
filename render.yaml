@@ -2,10 +2,10 @@ services:
   - type: web
     name: agri-smart-detect-frontend
     runtime: static
-    buildCommand: npm run build
+    buildCommand: npm install && npm run build
     staticPublishPath: ./build
     envVars:
-      - key: REACT_APP_BACKEND_URL
-        value: https://elegant-bonbon-c7e371.netlify.app/
-      - key: REACT_APP_PLANT_ID_API_KEY
-        value: 8VY7pHmuqNXEt7WlEclcIazuj24GUivdJbSXxJXviDYGTuixpg
+      - key: VITE_BACKEND_URL
+        value: https://agri-smart-detect-backend-3-m0y3.onrender.com
+      - key: VITE_PLANT_ID_API_KEY
+        sync: false
