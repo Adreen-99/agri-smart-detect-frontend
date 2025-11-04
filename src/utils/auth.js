@@ -2,6 +2,7 @@ const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'https://agri-smart-de
 
 export const auth = {
   async login(email, password) {
+    // Try live backend first
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
@@ -24,13 +25,41 @@ export const auth = {
 
       return data.user;
     } catch (error) {
-      throw new Error(error.message || 'Failed to connect to server');
+      console.error('Live backend login error:', error);
+
+      // Fallback to local backend
+      try {
+        console.log('Trying local backend for login...');
+        const localResponse = await fetch('http://localhost:5000/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (!localResponse.ok) {
+          const localErrorData = await localResponse.json();
+          throw new Error(localErrorData.message || 'Local login failed');
+        }
+
+        const localData = await localResponse.json();
+
+        // Store user data and token
+        localStorage.setItem('agri_smart_detect_user', JSON.stringify(localData.user));
+        localStorage.setItem('agri_smart_detect_token', localData.token);
+
+        return localData.user;
+      } catch (localError) {
+        console.error('Local backend login error:', localError);
+        throw new Error('Failed to connect to server. Please try again later.');
+      }
     }
   },
 
   async register(userData) {
+    // Try live backend first
     try {
-      // Use the backend /auth/register POST route
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
@@ -52,7 +81,35 @@ export const auth = {
 
       return data;
     } catch (error) {
-      throw new Error(error.message || 'Failed to connect to server');
+      console.error('Live backend registration error:', error);
+
+      // Fallback to local backend
+      try {
+        console.log('Trying local backend for registration...');
+        const localResponse = await fetch('http://localhost:5000/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
+        });
+
+        if (!localResponse.ok) {
+          const localErrorData = await localResponse.json();
+          throw new Error(localErrorData.errors?.join(', ') || 'Local registration failed');
+        }
+
+        const localData = await localResponse.json();
+
+        // Store user data and simulate token
+        localStorage.setItem('agri_smart_detect_user', JSON.stringify(localData));
+        localStorage.setItem('agri_smart_detect_token', 'simulated-jwt-token');
+
+        return localData;
+      } catch (localError) {
+        console.error('Local backend registration error:', localError);
+        throw new Error('Failed to connect to server. Please try again later.');
+      }
     }
   },
 

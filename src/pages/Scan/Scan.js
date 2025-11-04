@@ -44,32 +44,49 @@ const Scan = () => {
     setIsAnalyzing(true);
     setError('');
 
+    // Try Plant.id API first
     try {
-      const token = localStorage.getItem('agri_smart_detect_token');
+      const apiKey = process.env.REACT_APP_PLANT_ID_API_KEY;
 
       const formData = new FormData();
-      formData.append('image', imageFile);
+      formData.append('images', imageFile);
+      formData.append('modifiers', JSON.stringify(['crops_fast', 'similar_images']));
+      formData.append('plant_details', JSON.stringify(['common_names', 'url', 'description', 'taxonomy', 'rank', 'gbif_id']));
 
-      const response = await fetch('https://agri-smart-detect-backend.onrender.com/api/diagnosis/scan', {
+      const response = await fetch('https://api.plant.id/v2/identify', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Api-Key': apiKey,
         },
         body: formData,
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Analysis failed');
+        throw new Error('Plant.id API failed');
       }
 
       const data = await response.json();
-      setAnalysisResult(data.analysis);
+
+      // Transform Plant.id response to our format
+      const plantResult = {
+        plantName: data.suggestions[0]?.plant_name || 'Unknown Plant',
+        isHealthy: !data.suggestions[0]?.plant_details?.disease_suggestions?.length,
+        disease: data.suggestions[0]?.plant_details?.disease_suggestions?.[0]?.disease?.name || null,
+        confidence: Math.round(data.suggestions[0]?.probability * 100) || 0,
+        treatment: data.suggestions[0]?.plant_details?.disease_suggestions?.[0]?.disease?.treatment || 'No specific treatment available',
+        prevention: 'Practice good plant care, proper watering, and crop rotation.',
+        details: {
+          commonNames: data.suggestions[0]?.plant_details?.common_names || [],
+          description: data.suggestions[0]?.plant_details?.description?.value || 'Plant identification completed.'
+        }
+      };
+
+      setAnalysisResult(plantResult);
 
     } catch (error) {
-      console.error('Analysis error:', error);
+      console.error('Plant.id API error:', error);
 
-      // Fallback to mock data if API fails
+      // Fallback to mock data
       console.log('Using mock data as fallback');
       const mockResult = getMockAnalysisResult();
       mockResult.isMock = true; // Mark as mock data
