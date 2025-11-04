@@ -6,7 +6,7 @@ A React-based frontend application for **AI-powered plant disease detection** th
 Live Demo
 ---------
 
-You can view the deployed application here: **https://astounding-griffin-32d04b.netlify.app/**
+You can view the deployed application here: [**https://agri-smart-detect.onrender.com/**](https://agri-smart-detect.onrender.com/)
 
 Features
 --------
@@ -37,7 +37,7 @@ Environment Variables
 
 Create a .env file in the root directory with the following variables. _Note: For the live demo and Render deployment, these are handled via environment settings._
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   REACT_APP_BACKEND_URL=[https://your-backend-url.onrender.com](https://your-backend-url.onrender.com)  REACT_APP_PLANT_ID_API_KEY=your-plant-id-api-key   `
+REACT_APP_BACKEND_URL=[https://your-backend-url.onrender.com](https://your-backend-url.onrender.com)  REACT_APP_PLANT_ID_API_KEY=your-plant-id-api-key   `
 
 Development
 -----------
