@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://agri-smart-detect-backend-3-m0y3.onrender.com/api'; // Updated to match Render backend with /api prefix
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'https://agri-smart-detect-backend-3-m0y3.onrender.com';
 
 export const auth = {
   async login(email, password) {
