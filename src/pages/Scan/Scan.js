@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import './Scan.css';
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'https://agri-smart-detect-backend-3-m0y3.onrender.com';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'https://agri-smart-detect-backend-3-m0y3.onrender.com';
 
 const Scan = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -41,16 +41,27 @@ const Scan = () => {
   };
 
   const analyzeImage = async () => {
-    if (!selectedImage || !imageFile) return;
+    if (!selectedImage || !imageFile) {
+      setError('Please select an image first');
+      return;
+    }
     
     setIsAnalyzing(true);
     setError('');
+    setAnalysisResult(null);
     
     try {
       const token = localStorage.getItem('agri_smart_detect_token');
       
+      if (!token) {
+        throw new Error('Please login to analyze images');
+      }
+      
       const formData = new FormData();
       formData.append('image', imageFile);
+      
+      console.log('Sending request to:', `${API_BASE_URL}/api/diagnosis/scan`);
+      console.log('Token present:', !!token);
       
       const response = await fetch(`${API_BASE_URL}/api/diagnosis/scan`, {
         method: 'POST',
@@ -60,20 +71,35 @@ const Scan = () => {
         body: formData,
       });
 
+      console.log('Response status:', response.status);
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Analysis failed');
+        let errorMessage = 'Analysis failed';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.msg || errorData.message || 'Analysis failed';
+          console.error('Error response:', errorData);
+        } catch (e) {
+          console.error('Could not parse error response');
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
-      setAnalysisResult(data.analysis);
+      console.log('Success response:', data);
+      
+      if (data.analysis) {
+        setAnalysisResult(data.analysis);
+      } else {
+        throw new Error('Invalid response from server');
+      }
       
     } catch (error) {
       console.error('Analysis error:', error);
       setError(error.message || 'Failed to analyze image. Please try again.');
+    } finally {
+      setIsAnalyzing(false);
     }
-    
-    setIsAnalyzing(false);
   };
 
   const resetScan = () => {
@@ -101,8 +127,18 @@ const Scan = () => {
       </div>
 
       {error && (
-        <div className="error-banner">
-          {error}
+        <div className="error-banner" role="alert">
+          <div className="error-icon">⚠️</div>
+          <div className="error-content">
+            <strong>Error:</strong> {error}
+          </div>
+          <button 
+            className="error-close" 
+            onClick={() => setError('')}
+            aria-label="Close error"
+          >
+            ✕
+          </button>
         </div>
       )}
 
