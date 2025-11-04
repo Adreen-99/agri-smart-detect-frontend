@@ -30,7 +30,11 @@ export const auth = {
 
   async register(userData) {
     try {
+<<<<<<< HEAD
       // Use the backend /api/auth/register POST route
+=======
+      // Use the backend /api/auth/register route
+>>>>>>> dbf90866bd47f1eb23fc10fb9284404699c942a6
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
