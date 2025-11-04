@@ -22,8 +22,8 @@ const Home = () => {
             Our research is evaluated based, increase yields, and promote sustainable farming across Africa - one scan at a time.
           </p>
           <p className="hero-cta">
-            Join thousands of farmers using AI to protect their harvests and grow nutrient well Agri Smart Detect!
-          </p>
+            Join thousands of farmers using AI to protect their harvest by growing healthy crops that has high market value!
+             </p>
           
           {!currentUser && (
             <div className="hero-actions">

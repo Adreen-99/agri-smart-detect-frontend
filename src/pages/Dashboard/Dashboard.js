@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Dashboard.css';
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'https://agri-smart-detect-backend-3-m0y3.onrender.com';
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'https://agri-smart-detect-backend-3-m0y3.onrender.com';
 
 const Dashboard = () => {
   const { currentUser } = useAuth();
