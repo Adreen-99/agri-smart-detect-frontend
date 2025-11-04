@@ -1,4 +1,4 @@
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://agri-smart-detect-backend-3-m0y3.onrender.com';
+const BACKEND_URL = 'https://clean-backend-6rgv.onrender.com';
 const TOKEN_KEY = 'agri_smart_detect_token';
 
 const getAuthHeaders = () => {

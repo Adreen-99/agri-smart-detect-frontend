@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'https://agri-smart-detect-backend-3-m0y3.onrender.com';
+const API_BASE_URL = 'https://clean-backend-6rgv.onrender.com';
 
 export const auth = {
   async login(email, password) {
