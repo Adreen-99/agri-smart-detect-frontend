@@ -48,7 +48,7 @@ Development
     
 3.  Start development server: npm start
     
-4.  Open https://astounding-griffin-32d04b.netlify.app/.
+4.  Open http://localhost:3000.
     
 
 Deployment on Render
