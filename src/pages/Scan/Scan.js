@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import './Scan.css';
 
+const API_BASE_URL = 'https://clean-backend-6rgv.onrender.com';
+
 const Scan = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
