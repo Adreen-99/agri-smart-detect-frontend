@@ -3,7 +3,7 @@ const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'https://agri-smart-de
 export const auth = {
   async login(email, password) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,8 +30,8 @@ export const auth = {
 
   async register(userData) {
     try {
-      // Use the backend /api/auth/register POST route
-      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+      // Use the backend /api/auth/register route
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
