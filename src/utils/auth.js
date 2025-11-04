@@ -3,7 +3,7 @@ const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'https://clean-backend
 export const auth = {
   async login(email, password) {
     try {
-      const response = await fetch(`${API_BASE_URL}/login`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,8 +30,8 @@ export const auth = {
 
   async register(userData) {
     try {
-      // Use the backend /users POST route
-      const response = await fetch(`${API_BASE_URL}/users`, {
+      // Use the backend /api/auth/register POST route
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
