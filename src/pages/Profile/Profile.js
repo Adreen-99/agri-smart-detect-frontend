@@ -12,10 +12,8 @@ const Profile = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    firstName: '',
-    lastName: '',
-    phone: '',
-    location: ''
+    country: '',
+    phone_number: ''
   });
 
   useEffect(() => {
@@ -23,10 +21,8 @@ const Profile = () => {
       setFormData({
         name: currentUser.name || '',
         email: currentUser.email || '',
-        firstName: currentUser.firstName || '',
-        lastName: currentUser.lastName || '',
-        phone: currentUser.phone || '',
-        location: currentUser.location || ''
+        country: currentUser.country || '',
+        phone_number: currentUser.phone_number || ''
       });
     }
   }, [currentUser]);
@@ -70,10 +66,8 @@ const Profile = () => {
       setFormData({
         name: currentUser.name || '',
         email: currentUser.email || '',
-        firstName: currentUser.firstName || '',
-        lastName: currentUser.lastName || '',
-        phone: currentUser.phone || '',
-        location: currentUser.location || ''
+        country: currentUser.country || '',
+        phone_number: currentUser.phone_number || ''
       });
     }
   };
@@ -113,28 +107,14 @@ const Profile = () => {
                   <p>{currentUser.email || 'Not provided'}</p>
                 </div>
 
-                <div className="info-row">
-                  <div className="info-group">
-                    <label>First Name</label>
-                    <p>{currentUser.firstName || 'Not provided'}</p>
-                  </div>
-
-                  <div className="info-group">
-                    <label>Last Name</label>
-                    <p>{currentUser.lastName || 'Not provided'}</p>
-                  </div>
+                <div className="info-group">
+                  <label>Country</label>
+                  <p>{currentUser.country || 'Not provided'}</p>
                 </div>
 
-                <div className="info-row">
-                  <div className="info-group">
-                    <label>Phone</label>
-                    <p>{currentUser.phone || 'Not provided'}</p>
-                  </div>
-
-                  <div className="info-group">
-                    <label>Location</label>
-                    <p>{currentUser.location || 'Not provided'}</p>
-                  </div>
+                <div className="info-group">
+                  <label>Phone Number</label>
+                  <p>{currentUser.phone_number || 'Not provided'}</p>
                 </div>
 
                 <div className="profile-actions">
@@ -172,53 +152,28 @@ const Profile = () => {
                   />
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="firstName">First Name</label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="lastName">Last Name</label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                    />
-                  </div>
+                <div className="form-group">
+                  <label htmlFor="country">Country</label>
+                  <input
+                    type="text"
+                    id="country"
+                    name="country"
+                    value={formData.country}
+                    onChange={handleInputChange}
+                    placeholder="Enter your country"
+                  />
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="phone">Phone</label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="location">Location</label>
-                    <input
-                      type="text"
-                      id="location"
-                      name="location"
-                      value={formData.location}
-                      onChange={handleInputChange}
-                      placeholder="City, Country"
-                    />
-                  </div>
+                <div className="form-group">
+                  <label htmlFor="phone_number">Phone Number</label>
+                  <input
+                    type="tel"
+                    id="phone_number"
+                    name="phone_number"
+                    value={formData.phone_number}
+                    onChange={handleInputChange}
+                    placeholder="Enter your phone number"
+                  />
                 </div>
 
                 <div className="form-actions">
