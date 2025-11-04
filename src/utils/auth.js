@@ -3,7 +3,7 @@ const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'https://agri-smart-de
 export const auth = {
   async login(email, password) {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -13,14 +13,14 @@ export const auth = {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Login failed');
+        throw new Error(errorData.error || 'Login failed');
       }
 
       const data = await response.json();
 
-      // Store user data and token
+      // Store user data and token (backend returns access_token)
       localStorage.setItem('agri_smart_detect_user', JSON.stringify(data.user));
-      localStorage.setItem('agri_smart_detect_token', data.token);
+      localStorage.setItem('agri_smart_detect_token', data.access_token);
 
       return data.user;
     } catch (error) {
@@ -30,12 +30,7 @@ export const auth = {
 
   async register(userData) {
     try {
-<<<<<<< HEAD
-      // Use the backend /api/auth/register POST route
-=======
-      // Use the backend /api/auth/register route
->>>>>>> dbf90866bd47f1eb23fc10fb9284404699c942a6
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,16 +40,18 @@ export const auth = {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.errors?.join(', ') || 'Registration failed');
+        throw new Error(errorData.error || 'Registration failed');
       }
 
       const data = await response.json();
 
-      // Store user data and simulate token (since backend doesn't return token)
-      localStorage.setItem('agri_smart_detect_user', JSON.stringify(data));
-      localStorage.setItem('agri_smart_detect_token', 'simulated-jwt-token'); // Simulate token
+      // Backend returns {message, user} - we need to extract the user
+      const user = data.user;
+      
+      // Store user data (registration doesn't return token, user needs to login)
+      localStorage.setItem('agri_smart_detect_user', JSON.stringify(user));
 
-      return data;
+      return user;
     } catch (error) {
       throw new Error(error.message || 'Failed to connect to server');
     }
